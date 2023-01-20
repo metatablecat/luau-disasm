@@ -4,6 +4,15 @@
 
 Luau Bytecode is the underline format that Luau uses to run the code inside it's VM. Its a pretty basic format.
 
+> Bytecode can be outputted using the `luau` cli tool with the following command:
+> Run this command under `cmd`, not PowerShell
+>
+> ```batch
+> luau --compile=binary in.lua >> a.out
+> ```
+>
+> This command will output vanilla bytecode, not the bytecode format that Roblox uses internally.
+
 ## Conventions
 The following conventions are used in this format
 * All numbers are little-endian unless stated otherwise
