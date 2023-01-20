@@ -103,14 +103,13 @@ There are currently x known instruction rules:
 
 Or in another sense, lets take operation `GETIMPORT` which has the shape of `AD` followed by an `AUX`, 
 
-In hex, this may be delcared as
-`[0C] [00] [01 00] [00 00 00 40]`
+In hex, this may be delcared as `[0C] [00] [01 00] [00 00 00 40]`
 
 In this example:
-`0C` refers to the `GETIMPORT` instruction.
-`00` represents the register to push the value onto, since we use `AD` rule, this will be a `u8`
-`01 00` indicates the index in the Proto's import table, this is a `u16`.
-`00 00 00 40` is an auxilary instruction defined in the next instruction denoting the `import` object. See `Disecting Imports` for more information.
+* `0C` refers to the `GETIMPORT` instruction.
+* `00` represents the register to push the value onto, since we use `AD` rule, this will be a `u8`
+* `01 00` indicates the index in the Proto's import table, this is a `u16`.
+* `00 00 00 40` is an auxilary instruction defined in the next instruction denoting the `import` object. See `Disecting Imports` for more information.
 
 > Operations are declared under `Common/include/Luau/Bytecode.h` in the Luau source code
 
