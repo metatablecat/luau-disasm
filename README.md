@@ -31,27 +31,27 @@ Prototypes are the main object for representing code inside the bytecode. All Pr
 
 ```rs
 struct Proto {
-	stack_size: u8
-	params: u8
-	upvals: u8
-	is_vararg: u8
+	stack_size: u8,
+	params: u8,
+	upvals: u8,
+	is_vararg: u8,
 
-	sizecode: varint
-	code: Vec!<u32> 
+	sizecode: varint,
+	code: Vec!<u32> ,
 
-	sizek: varint
-	imports: Vec!<Import> 
+	sizek: varint,
+	imports: Vec!<Import> ,
 
-	sizep: varint
-	inner_protos: Vec!<varint>
+	sizep: varint,
+	inner_protos: Vec!<varint>,
 
-	linedefined: varint // version 2 onwards
-	debug_name_id: varint
+	linedefined: varint, // version 2 onwards
+	debug_name_id: varint,
 
-	has_line_info: u8
-	lineinfo: LineInfo //only exists if has_line_info is 1
+	has_line_info: u8,
+	lineinfo: LineInfo, //only exists if has_line_info is 1
 
-	has_debuginfo: u8
+	has_debuginfo: u8,
 	debuginfo: DebugInfo //only exists if has_debuginfo is 1
 }
 ```
