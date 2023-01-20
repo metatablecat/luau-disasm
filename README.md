@@ -91,15 +91,16 @@ Instructions follow the format:
 ### `instruction_params`
 Instruction parameters are declared in the bytecode specification, some bytecode operations may contain `AUX` instructions which mean the next instruction feeds into this instruction.
 
-There are currently x known instruction rules:
+There are 5 known instruction rules:
 |Rule|Shape|
 |-|-|
 |A|`u8`|
 |AB|`u8` `u8`|
-|ABC|`u8` `u8`|
+|ABC|`u8` `u8` `u8`|
 |AD|`u8` `u16`|
-|D|`u16`|
 |E|`u24`|
+
+> If the array does not fit into the shape correctly, for example, `A` and `AB`, assume the remaining space is padded with `NUL` bytes and do not consider it.
 
 Or in another sense, lets take operation `GETIMPORT` which has the shape of `AD` followed by an `AUX`, 
 
