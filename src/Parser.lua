@@ -211,29 +211,30 @@ return function(bytecode: string): Types.Disassembly
 
 		if readLEB128() ~= 0 then
 			-- Lineinfo
-			local lineinfo = {}
+			local lastoffset, lastline = 0, 0
+
+			local lineinfoStruct = {}
 
 			local linegaplog2 = string.byte(buffer:read())
 			local intervals = bit32.rshift(sizecode - 1, linegaplog2) + 1
 
-			local offsets = table.create(sizecode)
+			local lineinfo = table.create(sizecode)
 			for offsetIndex = 1, sizecode do
-				offsets[offsetIndex] = string.byte(buffer:read())
+				lastoffset = bit32.band(lastoffset + string.byte(buffer:read()), 0xFF)
+				lineinfo[offsetIndex] = lastoffset
 			end
 
-			local intervalTree = table.create(intervals)
+			local abslineinfo = table.create(intervals)
 			for intervalIndex = 1, intervals do
-				intervalTree[intervalIndex] = {
-					string.byte(buffer:read()),
-					string.byte(buffer:read()),
-					string.byte(buffer:read()),
-					string.byte(buffer:read())
-				}
+				-- shouldn't need to bitmask here but want to be safe
+				lastline = bit32.band(lastline + string.unpack("<I4", buffer:read(4)), 0xFF_FF_FF_FF)
+				abslineinfo[intervalIndex] = lastline
 			end
 
-			lineinfo.offsets = offsets
-			lineinfo.intervals = intervalTree
-			proto.LineInfo = lineinfo
+			lineinfoStruct.lineinfo = lineinfo
+			lineinfoStruct.linegaplog2 = linegaplog2
+			lineinfoStruct.abslineinfo = abslineinfo
+			proto.LineInfo = lineinfoStruct
 		end
 
 		if readLEB128() ~= 0 then
