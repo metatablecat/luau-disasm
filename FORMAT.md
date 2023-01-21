@@ -52,7 +52,7 @@ struct Proto {
 	imports: Vec!<Import> ,
 
 	sizep: varint,
-	inner_protos: Vec!<varint>,
+	constants: Vec!<varint>,
 
 	linedefined: varint, // version 2 onwards
 	debug_name_id: varint,
@@ -115,10 +115,10 @@ In this example:
 
 > Operations are declared under `Common/include/Luau/Bytecode.h` in the Luau source code
 
-### Imports
+### Constants
 `followed by sizek varint`
 
-Following a `varint` declaring the size, holds imports used in the protoype, imports are declared below.
+Following a `varint` declaring the size, holds constants used in the protoype, constants are declared below.
 
 ### Inner Protos
 `followed by sizep varint`
@@ -154,11 +154,10 @@ Debuginfo is used to declare names for variables and upvalues, this only emits o
 
 If the flag for this section 0, assume this is not here.
 
-## Imports
-Imports are used for prototypes to hold data.
-Imports have the basic structure of a `u8` typebit, followed by the data for that type.
+## Constants
+Constants are used for prototypes to hold data. Constants have the basic structure of a `u8` typebit, followed by the data for that type.
 
-There are 7 known import types
+There are 7 known constant types
 
 |Bit|Name|Description|
 |-|-|-|
@@ -180,9 +179,11 @@ local k1 = count > 1 and bit32.extract(id, 10, 10) + 1
 local k2 = count > 2 and bit32.band(id, 1023) + 1
 ```
 
-The k values will then point to indexes in the string table, such that it forms `k0.k1.k2`. Remember, k1 and k2 could be nil.
+The k values will then point to indexes in the constant table, such that it forms `k0.k1.k2`. Remember, k1 and k2 could be nil.
 
-### Table Imports
+> `import` constants should always be strings, if this is not the case, the file may be corrupted.
+
+### Table Constants
 From what I've seen, these are used to initialise tables with string keys.
 
 This means a table declared like:
@@ -192,12 +193,12 @@ local t = {
 }
 ```
 
-The import will start with a `varint` declaring the length, so for example, the above here would be `1`, and then for each varint being read, it points to an index in the string table, which denotes a key in the table.
+The constant will start with a `varint` declaring the length, so for example, the above here would be `1`, and then for each varint being read, it points to an index in the string table, which denotes a key in the table.
 
 ## Proto Debugs
 
 ### Line Info
-TODO
+TODO, refer to the parser for now
 
 > just leaving this here for reference so you dont have to dig through 20 different C files to find it
 >
