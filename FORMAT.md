@@ -198,7 +198,7 @@ The constant will start with a `varint` declaring the length, so for example, th
 ## Proto Debugs
 
 ### Line Info
-TODO
+TODO, refer to the parser for now
 
 > just leaving this here for reference so you dont have to dig through 20 different C files to find it
 >
