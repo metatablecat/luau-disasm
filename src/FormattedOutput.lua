@@ -129,10 +129,23 @@ local function writeConstants(constants: {Types.Constant}): string
 	return table.concat(stream, "\n") .. "\n"
 end
 
-return function(self: Types.Disassembly): string
+type outputFlags = {
+	ProcessDisectedLineInfo: (true|false)?
+}
+
+return function(self: Types.Disassembly, flags: outputFlags?): string
+	flags = flags or {}
+	local ProcessDisectedLineInfo = flags.ProcessDisectedLineInfo
+	
 	local buffer = string.format("Luau Bytecode Version: %s\n\n", self.Version)
 	-- Begin writing out prototypes
 	for idx, proto in self.Protos do
+		local lastline, lineinfo = 0, {}
+		if ProcessDisectedLineInfo then
+			lastline = -1
+			lineinfo = proto:DisectLineInfo()
+		end
+		
 		-- get function name
 		local funcName = if self.MainProto == proto
 		then ".<entry>(%s)\n"
@@ -150,12 +163,26 @@ return function(self: Types.Disassembly): string
 			table.insert(paramRegisters, "...")
 		end
 		
+		local instructions = {}
 		buffer ..= string.format(funcName, table.concat(paramRegisters, ", "))
+		
+		if not proto.LineInfo and ProcessDisectedLineInfo then
+			table.insert(instructions, "! Proto did not have disectable lineinfo")
+		end
 		
 		-- begin disecting lines
 		local aux_offset = 0
-		local instructions = {}
+		
 		for instCount, inst in proto.Code do
+			local line = lineinfo[instCount]
+			if line ~= lastline and ProcessDisectedLineInfo then
+				if lastline ~= -1 then
+					table.insert(instructions, "")
+				end
+				
+				lastline = line
+			end
+			
 			if inst.Name == "AUX" then continue end
 			table.insert(instructions, writeInstruction(inst, proto))
 		end

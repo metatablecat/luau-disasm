@@ -46,6 +46,13 @@ local function disectImport(import: number, constants: {Types.Constant}): {Types
 	return {k0, k1, k2}
 end
 
+local function GetLine(proto: Types.Proto, pc: number): number
+	local lineinfo = proto.LineInfo
+	if not lineinfo then return 0 end
+	
+	return lineinfo.abslineinfo[bit32.rshift(pc-1, lineinfo.linegaplog2) + 1] + lineinfo.lineinfo[pc]
+end
+
 -- Start disassembly here
 return function(bytecode: string): Types.Disassembly
 	local buffer = Buffer(bytecode)
@@ -263,6 +270,16 @@ return function(bytecode: string): Types.Disassembly
 			debuginfo.locvars = locvars
 			debuginfo.upvals = upvals
 			proto.DebugInfo = debuginfo
+		end
+	
+		function proto:DisectLineInfo(): {number}
+			local sizecode = #self.Code
+			local disectedLines = table.create(sizecode)
+			for i = 1, sizecode do
+				disectedLines[i] = GetLine(self, i)
+			end
+			
+			return disectedLines
 		end
 
 		protos[protoIndex] = proto

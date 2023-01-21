@@ -132,7 +132,7 @@ export type Proto = {
 	LineInfo: {
 		linegaplog2: number,
 		lineinfo: {number},
-		abslineinfo: {number}
+		abslineinfo: {number},
 	}?,
 
 	DebugInfo: {
@@ -143,7 +143,9 @@ export type Proto = {
 			register: number
 		},
 		upvals: {string}
-	}?
+	}?,
+	
+	DisectLineInfo: (Proto) -> {number}
 }
 
 export type Disassembly = {
@@ -151,7 +153,7 @@ export type Disassembly = {
 	Strings: {string},
 	Protos: {Proto},
 	MainProto: Proto,
-	Output: (Disassembly) -> string
+	Output: (Disassembly) -> string,
 }
 
 export type Buffer = {
