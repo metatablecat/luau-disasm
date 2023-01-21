@@ -208,6 +208,8 @@ TODO
 > ```
 > line = abslineinfo[pc >> linegaplog2] + lineinfo[pc]
 > ```
+>
+> These are under `VM/src/ldebug.cpp` if you want other methods for working with the `lineinfo`
 
 ### Debug Info
 Debug info is used to tell the VM the name values of registers and upvalues allocated into the prototype, this only appears when debug mode is set to `2`
