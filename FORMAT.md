@@ -91,16 +91,17 @@ Instructions follow the format:
 ### `instruction_params`
 Instruction parameters are declared in the bytecode specification, some bytecode operations may contain `AUX` instructions which mean the next instruction feeds into this instruction.
 
-There are 5 known instruction rules:
+There are 7 known instruction rules:
 |Rule|Shape|
 |-|-|
-|A|`u8`|
-|AB|`u8` `u8`|
+|A|`u8` `00` `00`|
+|AB|`u8` `u8` `00`|
+|AB|`u8` `00` `u8`|
 |ABC|`u8` `u8` `u8`|
 |AD|`u8` `u16`|
+|D| `00` `u16`|
 |E|`u24`|
 
-> If the array does not fit into the shape correctly, for example, `A` and `AB`, assume the remaining space is padded with `NUL` bytes and do not consider it.
 
 Or in another sense, lets take operation `GETIMPORT` which has the shape of `AD` followed by an `AUX`, 
 
@@ -194,4 +195,35 @@ local t = {
 The import will start with a `varint` declaring the length, so for example, the above here would be `1`, and then for each varint being read, it points to an index in the string table, which denotes a key in the table.
 
 ## Proto Debugs
+
+### Line Info
 TODO
+
+> just leaving this here for reference so you dont have to dig through 20 different C files to find it
+>
+> `pc`, progam counter, refers to the current instruction being line checked
+>
+> If no line info, return `0`
+>
+> ```
+> line = abslineinfo[pc >> linegaplog2] + lineinfo[pc]
+> ```
+
+### Debug Info
+Debug info is used to tell the VM the name values of registers and upvalues allocated into the prototype, this only appears when debug mode is set to `2`
+
+Debug Info contains two child objects: `locvars` and `upvals`, both of which are used to allocate names to registers.
+### `locvars`
+
+Local Vars have the following struct:
+
+|Name|Type|Description
+|-|-|-|
+|`name`|`varint`|Index from global string table|
+|`start_op`|`varint`|Operation number where register is assigned this name|
+|`end_op`|`varint`|Last operation where register has this name|
+|`register`|`u8`|Register to assign name onto|
+
+### `upvals`
+
+Upvals is a table of references to the string table, when `CAPTURE` is used for this proto, the name of the upvalue is assigned to the relevant name in this table.

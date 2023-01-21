@@ -130,8 +130,9 @@ export type Proto = {
 	LineDefined: number,
 	DebugName: string?,
 	LineInfo: {
-		offsets: {number},
-		intervals: {{number}}
+		linegaplog2: number,
+		lineinfo: {number},
+		abslineinfo: {number}
 	}?,
 
 	DebugInfo: {
